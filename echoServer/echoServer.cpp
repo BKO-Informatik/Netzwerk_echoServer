@@ -5,6 +5,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <time.h>
+#include<ctime>
 
 #include <iostream>
 #include <chrono>
@@ -16,6 +17,7 @@
 #include <winsock.h>
 #include <io.h>
 #pragma comment (lib, "Ws2_32.lib")
+#pragma warning(disable:4996) // disable windows warning for ctime 
 
 #else
 /* Headerfiles für Unix/Linux */
@@ -59,12 +61,12 @@ static void echo(int client_socket)
 	
 	//printf("Nachrichten vom Client : %s ",
 	//	echo_buffer);
-	auto now = std::chrono::high_resolution_clock::now();
-	auto micro = std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()).count();
-		
-	std::cout << "Nachricht vom Client: " << echo_buffer << " " << micro << std::endl;
 
-		
+	std::chrono::system_clock::time_point p = std::chrono::system_clock::now();
+	std::time_t t = std::chrono::system_clock::to_time_t(p);
+				
+	std::cout << "Nachricht vom Client: " << echo_buffer << " " << std::ctime(&t) << std::endl; // for example : Tue Dec 16 14:21:13 2014
+			
 }
 
 /* Funktion gibt aufgetrenene Fehler aus und
